@@ -4,8 +4,11 @@ module.exports =function (app, db){
     const urlsDB = db.db('urls')
 
     app.post('/shorten', (req, res) => {
-        const url = req.body.urlToShorten
+        let url = req.body.urlToShorten
         console.log('Shortening requested for', url)
+        if (!url.includes('http')){
+            url = 'http://' + url
+        }
         const newEntry = { token: nanoid.nanoid(8), original: url, views: 0}
         const shortenedUrl = 'http://localhost:8000/' + newEntry.token
         urlsDB.collection('urls').insertOne(newEntry, (err, result) => {
